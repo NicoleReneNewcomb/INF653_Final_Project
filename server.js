@@ -79,9 +79,9 @@ app.use(express.static(path.join(__dirname, '/public')));
 // use routes from external route files
 app.use('/', require('./routes/rootRoutes'));
 app.use('/states', require('./routes/statesRoutes'));
-app.all('/public', (req, res) => {
-    console.log("/public endpoint");
-});
+// app.all('/public', (req, res) => {
+//     console.log("/public endpoint");
+// });
 // app.use('/public', require('./routes/publicRoutes'));
 // app.use('/subdir', require('./routes/subdir'));
 // app.use('/register', require('./routes/register'));
