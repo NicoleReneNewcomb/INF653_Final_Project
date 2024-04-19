@@ -192,11 +192,11 @@ const updateFunFact = async (req, res) => {
     const stateCode = req.params.stateCode.toUpperCase();
 
     if (!index) {
-        return res.code(400).json({ 'message': 'State fun fact index value required' });
+        return res.status(400).json({ 'message': 'State fun fact index value required' });
     }
 
     if (!newFunFact) {
-        return res.code(400).json({ 'message': 'State fun fact value required' })
+        return res.status(400).json({ 'message': 'State fun fact value required' });
     }
 
     try {
@@ -227,7 +227,7 @@ const updateFunFact = async (req, res) => {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
     }
-}
+};
 
 module.exports = {
     getAllStates,
