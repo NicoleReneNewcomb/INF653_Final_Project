@@ -2,13 +2,15 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 
-router.get('^/$|/css/style(.css)?', (req, res) => {
+router.get('/css/style(.css)?', (req, res) => {
+    console.log("Inside PublicRoutes")
     res.sendFile(path.join(__dirname, '..', 'public', 'css', 'style.css'));
 });
 
 // catch all for any non-existing directories/files
 router.all('*', (req, res) => {
     // serve custom 404 page when pages not found
+    console.log("Inside publicRoutes");
     res.status(404)
     if (req.accepts('html')) {
         res.sendFile(path.join(__dirname, '..', 'views', '404.html'));

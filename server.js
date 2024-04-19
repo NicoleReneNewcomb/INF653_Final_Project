@@ -74,12 +74,15 @@ app.use(express.json());
 // by default, not providing '/' still defaults to '/'
 app.use(express.static(path.join(__dirname, '/public')));
 // this allows accessing of public docs from /subdir
-app.use('/subdir', express.static(path.join(__dirname, '/public')));
+// app.use('/subdir', express.static(path.join(__dirname, '/public')));
 
 // use routes from external route files
 app.use('/', require('./routes/rootRoutes'));
 app.use('/states', require('./routes/statesRoutes'));
-app.use('/public', require('./routes/publicRoutes'));
+app.all('/public', (req, res) => {
+    console.log("/public endpoint");
+});
+// app.use('/public', require('./routes/publicRoutes'));
 // app.use('/subdir', require('./routes/subdir'));
 // app.use('/register', require('./routes/register'));
 // app.use('/auth', require('./routes/auth'));
