@@ -20,9 +20,28 @@ const getAllStates = async (req, res) => {
                 const isContiguous = !nonContiguousStates.includes(state.code);
                 return isContiguous === contig;
             });
+
+            // fetch fun facts for filtered states
+            const funFactsPromises = filteredStates.map(state => getStateFunFacts(state.code));
+            const allFunFacts = await Promise.all(funFactsPromises);
+
+            // append fun facts to filtered states
+            filteredStates.forEach((state, index) => {
+                state.funfacts = allFunFacts[index];
+            });
+
             return res.json(filteredStates);
         }
         else {
+            // fetch fun facts for all states
+            const funFactsPromises = states.map(state => getStateFunFacts(state.code));
+            const allFunFacts = await Promise.all(funFactsPromises);
+
+            // append fun facts to states
+            states.forEach((state, index) => {
+                state.funfacts = allFunFacts[index];
+            });
+
             return res.json(states);
         }
     } 
@@ -30,7 +49,7 @@ const getAllStates = async (req, res) => {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
     }
-}
+};
 
 // get single state entry
 const getState = async (req, res) => {
@@ -41,7 +60,9 @@ const getState = async (req, res) => {
             res.status(400).json({ "message": "Invalid state abbreviation parameter" });
         }
         else {
-        res.json(state);
+            const funfacts = await getStateFunFacts(req.params.stateCode);
+            state.funfacts = funfacts;
+            res.json(state);
         }
     }
     catch(err) {
@@ -98,21 +119,26 @@ const getStateAdmission = async (req, res) => {
     res.json({ "state": state.state, "admitted": state.admission_date });
 };
 
+// helper function to get fun facts for a state
+const getStateFunFacts = async (stateCode) => {
+    const state = await States.findOne({ stateCode: stateCode.toUpperCase() });
+    return state ? state.funfacts : null;
+};
+
 // get single state entry
 const getFunFact = async (req, res) => {
     try {
-        const stateCode = req.params.stateCode.toUpperCase();
-        const state = await States.findOne({ stateCode });
+        const funfacts = await getStateFunFacts(req.params.stateCode);
     
-        if (!state || !state.funfacts || state.funfacts.length === 0) {
+        if (!funfacts || funfacts.length === 0) {
             return res.status(404).json({ 'message': 'No fun facts found for this state' });
         }
     
-        const randomIndex = Math.floor(Math.random() * state.funfacts.length);
-        const funFact = state.funfacts[randomIndex];
+        const randomIndex = Math.floor(Math.random() * funfacts.length);
+        const funFact = funfacts[randomIndex];
     
         res.json({ funFact });
-    } 
+    }
     catch(err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
