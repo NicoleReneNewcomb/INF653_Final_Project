@@ -202,10 +202,16 @@ const updateFunFact = async (req, res) => {
     try {
         index = index - 1;
         const stateFunFacts = await getStateFunFacts(stateCode);
+        const stateData = await getStateData(stateCode);
+
+        // check if no fun facts exist for the state
+        if (!stateFunFacts || stateFunFacts.length === 0) {
+            return res.status(404).json({ 'message': `No Fun Facts found for ${stateData.state}` });
+        }
 
         // check if index is valid
         if (index < 0 || index >= stateFunFacts.length) {
-            return res.status(400).json({ 'message': 'Invalid index' });
+            return res.status(404).json({ 'message': `No Fun Fact found at that index for ${stateData.state}` });
         }
 
         // update the fun fact
