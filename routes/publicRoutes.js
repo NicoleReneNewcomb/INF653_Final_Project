@@ -3,9 +3,10 @@ const router = express.Router();
 const path = require('path');
 
 router.get('^/$|/css/style(.css)?', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'css', 'style.css'));
+    res.sendFile(path.join(__dirname, 'public', 'css', 'style.css'));
 });
 
+// catch all for any non-existing directories/files
 router.all('*', (req, res) => {
     // serve custom 404 page when pages not found
     res.status(404)
