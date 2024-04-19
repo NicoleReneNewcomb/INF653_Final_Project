@@ -8,7 +8,8 @@ router.get('/', statesController.getAllStates);
 // functions for fun facts for particular state
 router.route('/:stateCode/funfact')
     .get(statesController.getFunFact)
-    .post(statesController.createNewFunFact);
+    .post(statesController.createNewFunFact)
+    .patch(statesController.updateFunFact);
 
 // returns the state capital
 router.get('/:stateCode/capital', 

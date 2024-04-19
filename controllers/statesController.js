@@ -128,7 +128,7 @@ const getStateFunFacts = async (stateCode) => {
     return state ? state.funfacts : null;
 };
 
-// get single state entry
+// get single state fun fact entry
 const getFunFact = async (req, res) => {
     try {
         const funfacts = await getStateFunFacts(req.params.stateCode);
@@ -185,6 +185,44 @@ const createNewFunFact = async (req, res) => {
     }
 };
 
+// update existing fun fact (PATCH request)
+const updateFunFact = async (req, res) => {
+    const newFunFact = req.body.funfact;
+    let index = req.body.index;
+    const stateCode = req.params.stateCode.toUpperCase();
+
+    if (!index) {
+        return res.code(400).json({ 'message': 'State fun fact index value required' });
+    }
+
+    if (!newFunFact) {
+        return res.code(400).json({ 'message': 'State fun fact value required' })
+    }
+
+    try {
+        index = index - 1;
+        const stateFunFacts = await getStateFunFacts(stateCode);
+
+        // check if index is valid
+        if (index < 0 || index >= stateFunFacts.length) {
+            return res.status(400).json({ 'message': 'Invalid index' });
+        }
+
+        // update the fun fact
+        const state = await State.findOneAndUpdate(
+            { stateCode: stateCode },
+            { $set: { [`funfacts.${index}`]: newFunFact } },
+            { new: true }
+        );
+
+        return res.status(200).json(state);
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+}
+
 module.exports = {
     getAllStates,
     getState,
@@ -193,5 +231,6 @@ module.exports = {
     getStatePopulation,
     getStateAdmission,
     getStateNickname,
-    getStateCapital
+    getStateCapital,
+    updateFunFact
 };
