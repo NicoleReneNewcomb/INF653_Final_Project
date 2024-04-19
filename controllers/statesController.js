@@ -135,11 +135,11 @@ const getFunFact = async (req, res) => {
         const state = await getStateData(req.params.stateCode);
 
         if (!state) {
-            res.status(400).json({ "message": "Invalid state abbreviation parameter" });
+            return res.status(400).json({ "message": "Invalid state abbreviation parameter" });
         }
     
         if (!funfacts || funfacts.length === 0) {
-            return res.status(404).json({ 'message': `No fun facts found for ${state.state}` });
+            return res.status(404).json({ 'message': `No Fun Facts found for ${state.state}` });
         }
     
         const randomIndex = Math.floor(Math.random() * funfacts.length);
