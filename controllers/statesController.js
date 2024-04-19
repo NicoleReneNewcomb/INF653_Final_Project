@@ -82,10 +82,7 @@ const getStateData = async (stateCode) => {
     const data = await fs.readFile(path.join(__dirname, '..', 'statesData.json'), 'utf8');
     const states = JSON.parse(data);
     const state = states.find(state => state.code === stateCode.toUpperCase());
-    if (!state) {
-        throw new Error('Invalid state abbreviation parameter');
-    }
-    return state;
+    return state || null;
 };
 
 // get state capital
