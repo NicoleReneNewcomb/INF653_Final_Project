@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
-const States = require('../models/States');
+const State = require('../models/State');
 const { STATES } = require('mongoose');
 
 // get all state entries
@@ -124,7 +124,7 @@ const getStateAdmission = async (req, res) => {
 
 // helper function to get fun facts for a state
 const getStateFunFacts = async (stateCode) => {
-    const state = await States.findOne({ stateCode: stateCode.toUpperCase() });
+    const state = await State.findOne({ stateCode: stateCode.toUpperCase() });
     return state ? state.funfacts : null;
 };
 
@@ -167,7 +167,7 @@ const createNewFunFact = async (req, res) => {
     }
 
     try {
-        const updatedState = await States.findOneAndUpdate(
+        const updatedState = await State.findOneAndUpdate(
             { stateCode }, 
             { $push: { funfacts: { $each: funfact } } },
             { new: true, upsert: true }

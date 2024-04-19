@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const statesSchema = new Schema({
+const stateSchema = new Schema({
     stateCode: {
         type: String,
         required: true,
@@ -12,6 +12,6 @@ const statesSchema = new Schema({
     },
 });
 
-// States will result in mongoose looking for states in MongoDB
+// State will result in mongoose looking for states in MongoDB
 // by default, looks for lower-case, plural version of model name
-module.exports = mongoose.model('States', statesSchema);
+module.exports = mongoose.model('State', stateSchema);
