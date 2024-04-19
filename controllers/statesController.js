@@ -138,9 +138,9 @@ const getFunFact = async (req, res) => {
         }
     
         const randomIndex = Math.floor(Math.random() * funfacts.length);
-        const funFact = funfacts[randomIndex];
+        const funfact = funfacts[randomIndex];
     
-        res.json({ funFact });
+        res.json({ funfact });
     }
     catch(err) {
         console.error(err);
