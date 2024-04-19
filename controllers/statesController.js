@@ -155,7 +155,7 @@ const getFunFact = async (req, res) => {
 
 // create new fun fact
 const createNewFunFact = async (req, res) => {
-    const funfact = req.body.funfact;
+    const funfact = req.body.funfacts;
     const stateCode = req.params.stateCode.toUpperCase();
 
     if (!funfact || !funfact.length === 0) {
