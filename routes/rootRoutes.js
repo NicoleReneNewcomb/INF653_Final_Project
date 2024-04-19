@@ -6,7 +6,7 @@ router.get('^/$|/index(.html)?', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'views', 'index.html'));
 });
 
-app.all('*', (req, res) => {
+router.all('*', (req, res) => {
     // serve custom 404 page when pages not found
     res.status(404)
     if (req.accepts('html')) {

@@ -6,7 +6,7 @@ router.get('^/$|/css/style(.css)?', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'public', 'css', 'style.css'));
 });
 
-app.all('*', (req, res) => {
+router.all('*', (req, res) => {
     // serve custom 404 page when pages not found
     res.status(404)
     if (req.accepts('html')) {
