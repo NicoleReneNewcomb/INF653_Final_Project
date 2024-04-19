@@ -3,10 +3,14 @@ const router = express.Router();
 const statesController = require('../controllers/statesController');
 
 router.get('/', statesController.getAllStates);
+router.get('*', (req, res) => {
+    console.log("In StatesRoutes File");
+});
 
 // catch all for any non-existing directories/files
 router.all('*', (req, res) => {
     // serve custom 404 page when pages not found
+    console.log("ERROR HERE");
     res.status(404)
     if (req.accepts('html')) {
         res.sendFile(path.join(__dirname, '..', 'views', '404.html'));

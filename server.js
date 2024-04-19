@@ -61,7 +61,7 @@ app.use(cors(corsOptions));
 // in other words, form data:
 // 'content-type: application/x-www-form-urlencoded'
 // being above the other routes means this is applied to all routes below
-app.use(express.urlencoded({ extended: false }));
+// app.use(express.urlencoded({ extended: false }));
 
 // built-in middleware for json data
 // applied to all routes below this part (waterfall processing)
@@ -77,10 +77,9 @@ app.use(express.static(path.join(__dirname, '/public')));
 // app.use('/subdir', express.static(path.join(__dirname, '/public')));
 
 // use routes from external route files
-app.use('/', (req, res) => {
-    res.status(201).sendFile(path.join(__dirname, 'views', 'index.html'));
-});
 app.use('/states', require('./routes/statesRoutes'));
+app.use('/', require('./routes/rootRoutes'));
+
 // app.all('/public', (req, res) => {
 //     console.log("/public endpoint");
 // });
@@ -124,22 +123,22 @@ app.get('/hello(.html)?', (req, res, next) => {
     res.send('Hello World!');
 });
 
-// chaining route handlers
-const one = (req, res, next) => {
-    console.log('one');
-    next();
-}
-const two = (req, res, next) => {
-    console.log('two');
-    next();
-}
-const three = (req, res, next) => {
-    console.log('three');
-    res.send('Finished!');
-}
+// // chaining route handlers
+// const one = (req, res, next) => {
+//     console.log('one');
+//     next();
+// }
+// const two = (req, res, next) => {
+//     console.log('two');
+//     next();
+// }
+// const three = (req, res, next) => {
+//     console.log('three');
+//     res.send('Finished!');
+// }
 
-// this calls all three handlers from above
-app.get('/chain(.html)?', [one, two, three]);
+// // this calls all three handlers from above
+// app.get('/chain(.html)?', [one, two, three]);
 
 // default match if no other routes match
 // app.get('/*', (req, res) => {
@@ -147,17 +146,18 @@ app.get('/chain(.html)?', [one, two, three]);
 //     res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
 // });
 // alternative 404 with app.all approach
-app.all('*', (req, res) => {
-    // serve custom 404 page when pages not found
-    res.status(404)
-    if (req.accepts('html')) {
-        res.sendFile(path.join(__dirname, 'views', '404.html'));
-    } else if (req.accepts('json')) {
-        res.json({ error: "404 Not Found"});
-    } else {
-        res.type('txt').send('404 Not Found');
-    }
-});
+// app.all('*', (req, res) => {
+//     // serve custom 404 page when pages not found
+//     console.log("Not found from server.js file.");
+//     res.status(404)
+//     if (req.accepts('html')) {
+//         res.sendFile(path.join(__dirname, 'views', '404.html'));
+//     } else if (req.accepts('json')) {
+//         res.json({ error: "404 Not Found"});
+//     } else {
+//         res.type('txt').send('404 Not Found');
+//     }
+// });
 
 // error handling - here using function from errorHandler.js
 // app.use(errorHandler);
