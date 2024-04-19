@@ -27,7 +27,9 @@ const getAllStates = async (req, res) => {
 
             // append fun facts to filtered states
             filteredStates.forEach((state, index) => {
-                state.funfacts = allFunFacts[index];
+                if (allFunFacts[index]) {
+                    state.funfacts = allFunFacts[index];
+                }
             });
 
             return res.json(filteredStates);
@@ -39,9 +41,11 @@ const getAllStates = async (req, res) => {
 
             // append fun facts to states
             states.forEach((state, index) => {
-                state.funfacts = allFunFacts[index];
+                if (allFunFacts[index]) {
+                    state.funfacts = allFunFacts[index];
+                }
             });
-
+            
             return res.json(states);
         }
     } 
@@ -61,7 +65,9 @@ const getState = async (req, res) => {
         }
         else {
             const funfacts = await getStateFunFacts(req.params.stateCode);
-            state.funfacts = funfacts;
+            if (funfacts) {
+                state.funfacts = funfacts;
+            }
             res.json(state);
         }
     }
