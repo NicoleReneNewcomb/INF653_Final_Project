@@ -85,7 +85,8 @@ const getStatePopulation = async (req, res) => {
     if (!state) {
         return res.status(400).json({ "message": "Invalid state abbreviation parameter" });
     }
-    res.json({ "state": state.state, "population": state.population });
+    const formattedPopulation = state.population.toLocaleString('en-US');
+    res.json({ "state": state.state, "population": formattedPopulation });
 };
 
 // get state admission date
