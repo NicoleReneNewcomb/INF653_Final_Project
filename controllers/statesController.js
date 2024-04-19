@@ -4,7 +4,7 @@ const States = require('../models/States');
 const getAllStates = async (req, res) => {
     const states = await States.find();
     if (!states) return res.status(204).json({ 'message': 'No states Found.' });
-    res.json(states);
+    res.status(201).json(states);
 }
 
 module.exports = {

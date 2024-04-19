@@ -77,7 +77,9 @@ app.use(express.static(path.join(__dirname, '/public')));
 // app.use('/subdir', express.static(path.join(__dirname, '/public')));
 
 // use routes from external route files
-app.use('/', require('./routes/rootRoutes'));
+app.use('/', (req, res) => {
+    res.status(201).sendFile(path.join(__dirname, 'views', 'index.html'));
+});
 app.use('/states', require('./routes/statesRoutes'));
 // app.all('/public', (req, res) => {
 //     console.log("/public endpoint");
