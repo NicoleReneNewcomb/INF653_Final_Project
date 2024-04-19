@@ -58,6 +58,11 @@ app.use(express.static(path.join(__dirname, '/public')));
 // this allows accessing of public docs from /subdir
 // app.use('/subdir', express.static(path.join(__dirname, '/public')));
 
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store')
+    next()
+  });
+
 // use routes from external route files
 app.use('/states', require('./routes/statesRoutes'));
 app.use('/', require('./routes/rootRoutes'));
