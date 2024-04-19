@@ -1,6 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 const States = require('../models/States');
+const { STATES } = require('mongoose');
 
 // get all state entries
 const getAllStates = async (req, res) => {
@@ -24,7 +25,8 @@ const getAllStates = async (req, res) => {
         else {
             return res.json(states);
         }
-    } catch (err) {
+    } 
+    catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
     }
@@ -33,14 +35,83 @@ const getAllStates = async (req, res) => {
 // get single state entry
 const getState = async (req, res) => {
     try {
-        const data = await fs.readFile(path.join(__dirname, '..', 'statesData.json'), 'utf8');
-        const states = JSON.parse(data);
-        const state = states.find(state => state.code === req.params.stateCode.toUpperCase());
+        const state = await getStateData(req.params.stateCode);
+        
+        if (!state) {
+            res.status(400).json({ "message": "Invalid state abbreviation parameter" });
+        }
+        else {
+        res.json(state);
+        }
+    }
+    catch(err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// helper function to get single state data
+const getStateData = async (stateCode) => {
+    const data = await fs.readFile(path.join(__dirname, '..', 'statesData.json'), 'utf8');
+    const states = JSON.parse(data);
+    const state = states.find(state => state.code === stateCode.toUpperCase());
+    if (!state) {
+        throw new Error('Invalid state abbreviation parameter');
+    }
+    return state;
+};
+
+// get state capital
+const getStateCapital = async (req, res) => {
+    const state = await getStateData(req.params.stateCode);
     if (!state) {
         return res.status(400).json({ "message": "Invalid state abbreviation parameter" });
     }
-    res.json(state);
+    res.json({ "state": state.state, "capital": state.capital_city });
+};
+
+// get state nickname
+const getStateNickname = async (req, res) => {
+    const state = await getStateData(req.params.stateCode);
+    if (!state) {
+        return res.status(400).json({ "message": "Invalid state abbreviation parameter" });
     }
+    res.json({ "state": state.state, "nickname": state.nickname });
+};
+
+// get state population
+const getStatePopulation = async (req, res) => {
+    const state = await getStateData(req.params.stateCode);
+    if (!state) {
+        return res.status(400).json({ "message": "Invalid state abbreviation parameter" });
+    }
+    res.json({ "state": state.state, "population": state.population });
+};
+
+// get state admission date
+const getStateAdmission = async (req, res) => {
+    const state = await getStateData(req.params.stateCode);
+    if (!state) {
+        return res.status(400).json({ "message": "Invalid state abbreviation parameter" });
+    }
+    res.json({ "state": state.state, "admitted": state.admission_date });
+};
+
+// get single state entry
+const getFunFact = async (req, res) => {
+    try {
+        const stateCode = req.params.stateCode.toUpperCase();
+        const state = await States.findOne({ stateCode });
+    
+        if (!state || !state.funfacts || state.funfacts.length === 0) {
+            return res.status(404).json({ 'message': 'No fun facts found for this state' });
+        }
+    
+        const randomIndex = Math.floor(Math.random() * state.funfacts.length);
+        const funFact = state.funfacts[randomIndex];
+    
+        res.json({ funFact });
+    } 
     catch(err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
@@ -49,17 +120,17 @@ const getState = async (req, res) => {
 
 // create new fun fact
 const createNewFunFact = async (req, res) => {
-    const { funfacts } = req.body.funfacts;
-    const state = req.params.stateCode.toUpperCase();
+    const funfact = req.body.funfact;
+    const stateCode = req.params.stateCode.toUpperCase();
 
-    if (!funfacts || !funfacts.length === 0) {
+    if (!funfact || !funfact.length === 0) {
         return res.status(400).json({ 'message': 'State fun facts value required' });
     }
 
     try {
-        const updatedState = await State.findOneAndUpdate(
+        const updatedState = await States.findOneAndUpdate(
             { stateCode }, 
-            { $push: { funfacts: { $each: funfacts } } },
+            { $push: { funfacts: { $each: funfact } } },
             { new: true, upsert: true }
         );
 
@@ -68,7 +139,8 @@ const createNewFunFact = async (req, res) => {
         }
 
         res.status(200).json(updatedState);
-    } catch (err) {
+    } 
+    catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Server error' });
     }
@@ -77,5 +149,10 @@ const createNewFunFact = async (req, res) => {
 module.exports = {
     getAllStates,
     getState,
-    createNewFunFact
+    getFunFact,
+    createNewFunFact,
+    getStatePopulation,
+    getStateAdmission,
+    getStateNickname,
+    getStateCapital
 };
