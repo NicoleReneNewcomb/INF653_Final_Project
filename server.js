@@ -32,25 +32,7 @@ connectDB();
 // could alternatively enter anonymous function here instead
 // app.use(logger);
 
-// Handle options credentials check - before CORS!
-// and fetch cookies credentials requirement
-// app.use(credentials);
 
-// apply CORS - Cross Origin Resource Sharing
-// either open to all or can create whitelist of sites or local host
-// CORS options moved to corsOptions.js in config folder
-// const whitelist = ['https://www.google.com', 
-//     'http://127.0.0.1:5500', 'http:localhost:2500'];
-// const corsOptions = {
-//     origin: (origin, callback) => {
-//         if (whitelist.indexOf(origin) !== -1 | !origin) {
-//             callback(null, true);
-//         } else {
-//             callback(new Error('Not allowed by CORS'));
-//         }
-//     },
-//     optionsSuccessStatus: 200
-// };
 // app.use generally used for middleware
 // app.use used to not accept REGEX, but it does in new versions
 // app.all generally used for routing - applies to all HTTP methods
@@ -103,16 +85,6 @@ app.use('/', require('./routes/rootRoutes'));
 //     res.sendFile(path.join(__dirname, 'views', 'index.html'));
 // });
 
-// app.get('/new-page(.html)?', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'views', 'new-page.html'));
-// });
-
-// app.get('/old-page(.html)?', (req, res) => {
-//     // returns 302 by default (temp redirect)
-//     // we prefer 301 for search engines to know is permanent redirect
-//     res.redirect(301, '/new-page.html');
-// });
-
 // route handlers (here anonymous functions) can be chained
 // next allows the handler to move to the next handler
 // this logs the console message then shows HW message on page
@@ -150,10 +122,10 @@ app.all('*', (req, res) => {
     // serve custom 404 page when pages not found
     console.log("Not found from server.js file.");
     res.status(404)
-    if (req.accepts('html')) {
+    if (req.accepts('text/html')) {
         res.sendFile(path.join(__dirname, 'views', '404.html'));
-    } else if (req.accepts('json')) {
-        res.json({ error: "404 Not Found"});
+    } else if (req.accepts('application/json')) {
+        res.json({ "error": "404 Not Found"});
     } else {
         res.type('txt').send('404 Not Found');
     }
