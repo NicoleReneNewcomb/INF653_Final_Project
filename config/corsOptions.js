@@ -1,5 +1,9 @@
+// sets CORS options for access from other sites
+
 const allowedOrigins = require('./allowedOrigins');
 
+// if allowedOrigins includes '*' allows all
+// otherwise, only allows sites on list access
 const corsOptions = {
     origin: (origin, callback) => {
         if (allowedOrigins.includes('*') 

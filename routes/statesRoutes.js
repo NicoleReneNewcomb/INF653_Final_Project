@@ -1,3 +1,4 @@
+// this file contains the routes for the /states subdirectory
 const express = require('express');
 const router = express.Router();
 const statesController = require('../controllers/statesController');
@@ -9,7 +10,8 @@ router.get('/', statesController.getAllStates);
 router.route('/:stateCode/funfact')
     .get(statesController.getFunFact)
     .post(statesController.createNewFunFact)
-    .patch(statesController.updateFunFact);
+    .patch(statesController.updateFunFact)
+    .delete(statesController.deleteFunFact);
 
 // returns the state capital
 router.get('/:stateCode/capital', 
@@ -27,17 +29,8 @@ router.get('/:stateCode/population',
 router.get('/:stateCode/admission', 
     statesController.getStateAdmission);
 
-// pulling parameters from url
+// returns single state data
 router.route('/:stateCode')
     .get(statesController.getState);
-
-
-
-// // .route() allows for chaining of different HTTP method types
-// router.route('/')
-// .get(employeesController.getAllEmployees)
-// .post(employeesController.createNewEmployee)
-// .put(employeesController.updateEmployee)
-// .delete(employeesController.deleteEmployee);
 
 module.exports = router;

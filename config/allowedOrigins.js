@@ -1,3 +1,4 @@
+// added '*' to allow all, otherwise only allows listed sites
 const allowedOrigins = [
     '*',
     'https://dazzling-snickerdoodle-777101.netlify.app/',

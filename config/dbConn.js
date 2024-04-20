@@ -1,9 +1,12 @@
+// this file sets up the MongoDB database connection
+
 const mongoose = require('mongoose');
 
 const connectDB = async () => {
     try {
         await mongoose.connect(process.env.DATABASE_URI);
-    } catch (err) {
+    } 
+    catch (err) {
         console.error(err);
     }
 }
