@@ -3,6 +3,23 @@
 const fs = require('fs').promises;
 const path = require('path');
 const State = require('../models/State');
+const statesData = require('../statesData.json');
+
+// checks validaty of passed state abbreviation parameter
+const verifyStates = (req, res, next) => {
+    // get state abbreviation parameter and values from json file
+    const stateCode = req.params.stateCode.toUpperCase();
+    const stateCodes = statesData.map(state => state.code);
+
+    // check if state abbreviation exists in json file
+    if (!stateCodes.includes(stateCode)) {
+        return res.status(400).json({ 'message': 'Invalid state abbreviation parameter' });
+    }
+
+    // add stateCode to request 
+    req.stateCode = stateCode;
+    next();
+};
 
 // get all state entries (json + fun facts)
 const getAllStates = async (req, res) => {
@@ -63,22 +80,14 @@ const getAllStates = async (req, res) => {
 const getState = async (req, res) => {
     try {
         // use helper function to return state based on passed parameter
-        const state = await getStateData(req.params.stateCode);
-        
-        // if no state returned, return error message
-        if (!state) {
-            res.status(400).json({ "message": "Invalid state abbreviation parameter" });
-        }
-        else {
-            // get the fun facts for the state
-            const funfacts = await getStateFunFacts(req.params.stateCode);
+        const state = await getStateData(req.stateCode);
+        const funfacts = await getStateFunFacts(req.stateCode);
             
-            // add fun facts to the state
-            if (funfacts) {
-                state.funfacts = funfacts;
-            }
-            res.json(state);
+        // add fun facts to the state
+        if (funfacts) {
+            state.funfacts = funfacts;
         }
+        res.json(state);
     }
     catch(err) {
         console.error(err);
@@ -100,36 +109,23 @@ const getStateData = async (stateCode) => {
 // get state capital
 const getStateCapital = async (req, res) => {
     // use helper function to retrieve state data
-    const state = await getStateData(req.params.stateCode);
-    
-    // if state not found, return error message
-    if (!state) {
-        return res.status(400).json({ "message": "Invalid state abbreviation parameter" });
-    }
+    const state = await getStateData(req.stateCode);
     res.json({ "state": state.state, "capital": state.capital_city });
 };
 
 // get state nickname
 const getStateNickname = async (req, res) => {
     // use helper function to retrieve state data
-    const state = await getStateData(req.params.stateCode);
-
-    // if state not found, return error message
-    if (!state) {
-        return res.status(400).json({ "message": "Invalid state abbreviation parameter" });
-    }
+    const state = await getStateData(req.stateCode);
     res.json({ "state": state.state, "nickname": state.nickname });
 };
 
 // get state population
 const getStatePopulation = async (req, res) => {
     // use helper function to retrieve state data
-    const state = await getStateData(req.params.stateCode);
+    const state = await getStateData(req.stateCode);
 
-    // if state not found, return error message
-    if (!state) {
-        return res.status(400).json({ "message": "Invalid state abbreviation parameter" });
-    }
+    // convert population number to string with commas
     const formattedPopulation = state.population.toLocaleString('en-US');
     res.json({ "state": state.state, "population": formattedPopulation });
 };
@@ -137,12 +133,7 @@ const getStatePopulation = async (req, res) => {
 // get state admission date
 const getStateAdmission = async (req, res) => {
     // use helper function to retrieve state data
-    const state = await getStateData(req.params.stateCode);
-
-    // if state not found, return error message
-    if (!state) {
-        return res.status(400).json({ "message": "Invalid state abbreviation parameter" });
-    }
+    const state = await getStateData(req.stateCode);
     res.json({ "state": state.state, "admitted": state.admission_date });
 };
 
@@ -156,13 +147,8 @@ const getStateFunFacts = async (stateCode) => {
 const getFunFact = async (req, res) => {
     try {
         // use helper functions to get fun facts from MongoDB and json data
-        const funfacts = await getStateFunFacts(req.params.stateCode);
-        const state = await getStateData(req.params.stateCode);
-
-        // if state not found, return error message
-        if (!state) {
-            return res.status(400).json({ "message": "Invalid state abbreviation parameter" });
-        }
+        const funfacts = await getStateFunFacts(req.stateCode);
+        const state = await getStateData(req.stateCode);
     
         // if there are no state fun facts, return error message
         if (!funfacts || funfacts.length === 0) {
@@ -185,7 +171,7 @@ const getFunFact = async (req, res) => {
 const createNewFunFact = async (req, res) => {
     // funfact value and state abbreviation parameter
     const funfact = req.body.funfacts;
-    const stateCode = req.params.stateCode.toUpperCase();
+    const stateCode = req.stateCode;
 
     // if there are no state fun facts, return error message
     if (!funfact || funfact.length === 0) {
@@ -223,7 +209,7 @@ const updateFunFact = async (req, res) => {
     // funfact and index values and state abbreviation parameter
     const newFunFact = req.body.funfact;
     let index = req.body.index;
-    const stateCode = req.params.stateCode.toUpperCase();
+    const stateCode = req.stateCode;
 
     // if no index value passed in body, return error message
     if (!index) {
@@ -271,7 +257,7 @@ const updateFunFact = async (req, res) => {
 const deleteFunFact = async (req, res) => {
     // assign index value and state abbreviation parameter
     let index = req.body.index;
-    const stateCode = req.params.stateCode.toUpperCase();
+    const stateCode = req.stateCode;
 
     // if no index value passed in body, return error message
     if (!index) {
@@ -317,6 +303,7 @@ const deleteFunFact = async (req, res) => {
 };
 
 module.exports = {
+    verifyStates,
     getAllStates,
     getState,
     getFunFact,
